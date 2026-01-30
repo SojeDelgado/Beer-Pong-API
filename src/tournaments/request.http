@@ -1,0 +1,98 @@
+### Generate matchups for round-robin
+POST http://localhost:3000/tournaments/generate-matchups
+Content-Type: application/json
+
+{
+  "playersIds": 
+  [
+    "6936fae8022dfe70a898e5c6", "6936ffbfcce2fe398b5006ec", "6937581661f87d3979c8bc57", "6937583661f87d3979c8bc5b",
+    "69388f5071196e2f316e1383", "6938910971196e2f316e1399"
+  ],
+  "type": "SingleElimination"
+}
+
+
+### Generate tournament
+POST http://localhost:3000/tournaments
+Content-Type: application/json
+
+{
+  "name": "Prueba 1",
+  "place": "Arquito",
+  "type": "RoundRobin",
+  "matches": [
+    {
+      "away": "6936ffbfcce2fe398b5006ec",
+      "awayScore": 0,
+      "home": "6936fae8022dfe70a898e5c6",
+      "homeScore": 6,
+      "homeIsla": true,
+      "awayIsla": false
+    },
+    {
+      "away": "6937581661f87d3979c8bc57",
+      "awayScore": 0,
+      "home": "6936fae8022dfe70a898e5c6",
+      "homeScore": 6,
+      "homeIsla": true,
+      "awayIsla": false
+    },
+    {
+      "away": "6937581661f87d3979c8bc57",
+      "awayScore": 0,
+      "home": "6936ffbfcce2fe398b5006ec",
+      "homeScore": 6,
+      "homeIsla": true,
+      "awayIsla": false
+    }
+  ]
+}
+
+
+### Find by type
+GET http://localhost:3000/tournaments?type=RoundRobin
+
+### Get a tournament
+GET http://localhost:3000/tournaments/6942d8179ac6bc330e653a50
+
+
+
+### Testear Single Elimination
+POST http://localhost:3000/tournaments/create-tournament-with-matchups
+Content-Type: application/json
+
+{
+  "name": "Single Elimination",
+  "place": "Mi casa",
+  "type": "SingleElimination",
+  "playersIds": [
+    "6936fae8022dfe70a898e5c6",
+    "6936ffbfcce2fe398b5006ec",
+    "6937581661f87d3979c8bc57",
+    "6937583661f87d3979c8bc5b",
+    "69388f5071196e2f316e1383",
+    "6938910971196e2f316e1399",
+    "69416f6808c5d7f1079fc4c7",
+    "69442635d9a573076eb1192b"
+  ]
+}
+
+### Actualizar un solo match de un torneo
+POST http://localhost:3000/tournaments/update-matches
+Content-Type: application/json
+
+{
+  "tournamentId": "6967b93165630127beca87b7",
+  "home": "6937581661f87d3979c8bc57",
+  "away": "6938910971196e2f316e1399",
+  "homeScore": 6,
+  "awayScore": 3,
+  "homeIsla": true,
+  "awayIsla": false,
+  "home2in1": true,
+  "away2in1": false,
+  "home3in1": false,
+  "away3in1": false,
+  "matchId": 6,
+  "nextMatchId": 2
+}

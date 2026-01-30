@@ -1,0 +1,15 @@
+### Create or update a player stat
+POST http://localhost:3000/stats/6936fae8022dfe70a898e5c6
+Content-Type: application/json
+
+{
+    "puntos_favor_totales": 1,
+    "puntos_contra_totales": 1,
+    "partidas_jugadas": 1,
+    "partidas_ganadas": 1,
+    "partidas_perdidas": 1,
+    "islas": 1
+}
+
+### Get all stats
+GET http://localhost:3000/stats

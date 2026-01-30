@@ -1,0 +1,19 @@
+### Create a new match
+POST http://localhost:3000/matches
+Content-Type: application/json
+
+{
+    "home": "6936fae8022dfe70a898e5c6",
+    "away": "6936ffbfcce2fe398b5006ec",
+    "homeScore": 6,
+    "awayScore": 1,
+    "homeIsla": false,
+    "awayIsla": false,
+    "home2in1": false,
+    "away2in1": false,
+    "home3in1": false,
+    "away3in1": false
+}
+
+### Get all matches
+GET  http://localhost:3000/matches
