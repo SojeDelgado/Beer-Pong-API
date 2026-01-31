@@ -7,13 +7,14 @@ import { TournamentDto } from 'src/common/dtos/tournament.dto';
 import { ParseObjectIdPipe } from 'nestjs-object-id';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { SingleEliminationMatchDto } from 'src/common/dtos/single-elimination-match.dto';
+import { CreateTournamentDto } from 'src/common/dtos/create-tournament.dto';
 
 @Controller('single-elimination')
 export class SingleEliminationController {
   constructor(private readonly singleEliminationService: SingleEliminationService) { }
 
   @Post()
-  create(@Body() createSingleEliminationDto: CreateSingleEliminationDto) {
+  create(@Body() createSingleEliminationDto: CreateTournamentDto) {
     return this.singleEliminationService.create(createSingleEliminationDto);
   }
 

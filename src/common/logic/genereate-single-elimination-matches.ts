@@ -2,6 +2,16 @@ import { Player } from "src/players/schemas/player.schema";
 import { MatchUp } from "../models/matchup.model";
 
 export class MatchupsBuilder {
+
+    // metodo para randomizar los players que vengan de round-robin.
+    private shuffle(array: any[]): any[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     private getSeedOrder(numRounds: number): number[] {
         let seeds = [0, 1];
         for (let i = 1; i < numRounds; i++) {
@@ -59,7 +69,7 @@ export class MatchupsBuilder {
                 match.away = player2;
             } else if (player1 || player2) {
                 const winner = player1 || player2;
-                this.promoteToNextRound(matchups, match.nextMatchId, winner, match.matchId);
+                this.promoteToNextRound(matchups, match.nextMatchId!, winner, match.matchId!);
 
                 match.home = player1;
                 match.away = player2;
@@ -67,4 +77,39 @@ export class MatchupsBuilder {
         }
         return matchups;
     }
+
+    generateRoundRobinMatchups(players: Player[]): MatchUp[] {
+        const matchups: MatchUp[] = [];
+        let tempPlayers: (Player | null)[] = this.shuffle([...players]);
+        let matchId = 0;
+
+        if (tempPlayers.length % 2 !== 0) {
+            tempPlayers.push(null);
+        }
+
+        const numPlayers = tempPlayers.length;
+        const numRounds = numPlayers - 1;
+        const matchesPerRound = numPlayers / 2;
+
+        for (let round = 0; round < numRounds; round++) {
+            for (let i = 0; i < matchesPerRound; i++) {
+                const home = tempPlayers[i];
+                const away = tempPlayers[numPlayers - 1 - i];
+
+                if (home !== null && away !== null) {
+                    const isFlipped = Math.random() > 0.5;
+                    matchups.push({
+                        home: isFlipped ? away : home,
+                        away: isFlipped ? home : away,
+                        round: round + 1,
+                        matchId: matchId,
+                    });
+                }
+                matchId++;
+            }
+            tempPlayers.splice(1, 0, tempPlayers.pop()!);
+        }
+        return matchups;
+    }
+
 }

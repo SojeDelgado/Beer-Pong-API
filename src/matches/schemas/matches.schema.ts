@@ -38,17 +38,6 @@ export class Match {
 
     @Prop({ default: Date.now })
     date: Date;
-
-    // Campos para eliminacion directa
-    @Prop({ required: false, default: 0 })
-    matchId: number;
-
-    @Prop({ required: false, default: 0 })
-    nextMatchId: number;
-
-    @Prop({ required: false, default: 0 })
-    round: number;
-
 }
 
 export const MatchSchema = SchemaFactory.createForClass(Match);

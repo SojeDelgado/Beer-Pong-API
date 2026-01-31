@@ -7,8 +7,8 @@ import { PlayersModule } from './players/players.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { StatsModule } from './stats/stats.module';
 import { MatchesModule } from './matches/matches.module';
-import { TournamentsModule } from './tournaments/tournaments.module';
 import { SingleEliminationModule } from './single-elimination/single-elimination.module';
+import { RoundRobinModule } from './round-robin/round-robin.module';
 
 @Module({
   imports: [
@@ -16,8 +16,8 @@ import { SingleEliminationModule } from './single-elimination/single-elimination
     PlayersModule,
     StatsModule,
     MatchesModule,
-    TournamentsModule,
-    SingleEliminationModule
+    SingleEliminationModule,
+    RoundRobinModule
   ],
   controllers: [],
   providers: [],
