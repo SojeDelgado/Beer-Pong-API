@@ -3,6 +3,9 @@ import { MatchesService } from './matches.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { Serialize } from 'src/interceptors/serialize.interceptors';
+import { MatchDto } from './dto/match.dto';
+import { MatchPaginatedDto } from './dto/match.paginated.dto';
 
 @Controller('matches')
 export class MatchesController {
@@ -14,8 +17,9 @@ export class MatchesController {
   }
 
   @Get()
+  @Serialize(MatchPaginatedDto)
   findAll(@Query() paginationDto: PaginationDto) {
-    return paginationDto;
+    return this.matchesService.findAll(paginationDto);
   }
 
   @Get(':id')

@@ -6,6 +6,7 @@ import { PlayersService } from 'src/players/players.service';
 import { StatsService } from 'src/stats/stats.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class MatchesService {
@@ -49,11 +50,25 @@ export class MatchesService {
     return createdMatch.save();
   }
 
-  findAll(): Promise<Match[]> {
-    return this.matchModel.find()
+  async findAll(paginationDto: PaginationDto) {
+    const { page, limit } = paginationDto;
+    const totalPages = await this.matchModel.countDocuments().exec()
+    const lastPage = Math.ceil( totalPages / limit! )
+
+    return {
+    data: await this.matchModel.find()
       .populate('home', 'nickname')
       .populate('away', 'nickname')
-      .exec();
+      .skip( (page! - 1) * limit! )
+      .limit( limit! )
+      .exec(),
+    
+      meta: {
+        total: totalPages,
+        page: page,
+        lastPage: lastPage
+      }
+    }
   }
 
 
