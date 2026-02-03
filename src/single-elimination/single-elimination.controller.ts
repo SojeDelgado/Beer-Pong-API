@@ -47,7 +47,6 @@ export class SingleEliminationController {
   @Serialize(SingleEliminationMatchDto)
   @Get(':id/matches')
   getMatches(@Param('id', ParseObjectIdPipe) id: string) {
-    console.log("Una request");
     return this.singleEliminationService.getMatches(id);
   }
 

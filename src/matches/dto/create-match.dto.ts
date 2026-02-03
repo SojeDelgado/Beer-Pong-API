@@ -1,4 +1,4 @@
-import { IsBoolean, IsMongoId, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsMongoId, IsNumber } from "class-validator";
 
 export class CreateMatchDto {
     @IsMongoId()

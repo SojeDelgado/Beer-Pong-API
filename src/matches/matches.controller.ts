@@ -1,23 +1,35 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MatchesService } from './matches.service';
-import { Serialize } from 'src/interceptors/serialize.interceptors';
-import { MatchDto } from './dtos/match.dto';
-import { CreateMatchDto } from './dtos/create-match.dto';
+import { CreateMatchDto } from './dto/create-match.dto';
+import { UpdateMatchDto } from './dto/update-match.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('matches')
-@Serialize(MatchDto)
 export class MatchesController {
+  constructor(private readonly matchesService: MatchesService) { }
 
-    constructor(private matchesService: MatchesService){}
+  @Post()
+  create(@Body() createMatchDto: CreateMatchDto) {
+    return this.matchesService.create(createMatchDto);
+  }
 
-    @Get()
-    allMatches() {
-        return this.matchesService.findAll();
-    }
+  @Get()
+  findAll(@Query() paginationDto: PaginationDto) {
+    return paginationDto;
+  }
 
-    @Post()
-    createMatch(@Body() body: CreateMatchDto) {
-        return this.matchesService.create(body);
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.matchesService.findOne(+id);
+  }
 
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateMatchDto: UpdateMatchDto) {
+    return this.matchesService.update(+id, updateMatchDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.matchesService.remove(+id);
+  }
 }

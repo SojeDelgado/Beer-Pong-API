@@ -6,9 +6,9 @@ import { PlayersModule } from './players/players.module';
 // Mongo
 import { MongooseModule } from '@nestjs/mongoose';
 import { StatsModule } from './stats/stats.module';
-import { MatchesModule } from './matches/matches.module';
 import { SingleEliminationModule } from './single-elimination/single-elimination.module';
 import { RoundRobinModule } from './round-robin/round-robin.module';
+import { MatchesModule } from './matches/matches.module';
 
 @Module({
   imports: [

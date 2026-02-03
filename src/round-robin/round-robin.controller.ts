@@ -6,6 +6,8 @@ import { TournamentDto } from 'src/common/dtos/tournament.dto';
 import { ParseObjectIdPipe } from 'nestjs-object-id';
 import { UpdateMatchDto } from 'src/single-elimination/dto/update-match.dto';
 import { CreateTournamentDto } from 'src/common/dtos/create-tournament.dto';
+import { RrMatchDto } from './dto/round-robin-match.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('round-robin')
 export class RoundRobinController {
@@ -19,7 +21,9 @@ export class RoundRobinController {
   // Traer a todos los torneos, sin los matches.
   @Serialize(TournamentDto)
   @Get()
-  findAll() {
+  findAll(
+    @Query() paginationDto: PaginationDto
+  ) {
     return this.roundRobinService.findAll();
   }
 
@@ -38,7 +42,7 @@ export class RoundRobinController {
     return this.roundRobinService.update(+id, updateRoundRobinDto);
   }
 
-  // @Serialize(SingleEliminationMatchDto)
+  @Serialize(RrMatchDto)
   @Get(':id/rrMatches')
   getRoundRobinMatches(@Param('id', ParseObjectIdPipe) id: string) {
     return this.roundRobinService.getRoundRobinMatches(id);

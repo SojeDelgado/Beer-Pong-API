@@ -8,17 +8,20 @@ async function bootstrap() {
   const logger = new Logger('BeerPong-API');
 
   const app = await NestFactory.create(AppModule);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: true
     }),
   );
+
   app.enableCors();
   await app.listen(process.env.PORT ?? 3000);
 
   logger.log(`API running on port ${3000}`);
 }
+
 bootstrap();
 
 // src/main.ts
