@@ -4,13 +4,14 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Serialize } from 'src/interceptors/serialize.interceptors';
-import { MatchDto } from './dto/match.dto';
 import { MatchPaginatedDto } from './dto/match.paginated.dto';
+import { MatchDto } from './dto/match.dto';
 
 @Controller('matches')
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) { }
 
+  @Serialize(MatchDto)
   @Post()
   create(@Body() createMatchDto: CreateMatchDto) {
     return this.matchesService.create(createMatchDto);

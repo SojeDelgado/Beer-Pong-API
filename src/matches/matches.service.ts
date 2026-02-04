@@ -7,22 +7,23 @@ import { StatsService } from 'src/stats/stats.service';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { DateEnum } from 'src/common/enums/date.enum';
 
 @Injectable()
 export class MatchesService {
 
-   constructor(
-        @InjectModel(Match.name) private matchModel: Model<Match>,
-        private readonly playerService: PlayersService,
-        private readonly statsService: StatsService
-    ) { }
+  constructor(
+    @InjectModel(Match.name) private matchModel: Model<Match>,
+    private readonly playerService: PlayersService,
+    private readonly statsService: StatsService
+  ) { }
 
 
-  
+
   async create(createMatchDto: CreateMatchDto): Promise<Match> {
     await this.playerService.findById(createMatchDto.home);
     await this.playerService.findById(createMatchDto.away);
-    const createdMatch = new this.matchModel(createMatchDto);
+    const createdMatch = new this.matchModel(createMatchDto)
 
     const homeData = {
       partidas_jugadas: 1,
@@ -47,22 +48,38 @@ export class MatchesService {
       this.statsService.createOrUpdate(createMatchDto.away, awayData)
     ]);
 
-    return createdMatch.save();
+    await createdMatch.save();
+
+    const populateOptions = [
+      {
+        path: 'home away',
+        select: 'nickname'
+      }
+    ]
+
+    return createdMatch.populate(populateOptions)
   }
 
   async findAll(paginationDto: PaginationDto) {
-    const { page, limit } = paginationDto;
+    const { page, limit, dateFilter } = paginationDto;
     const totalPages = await this.matchModel.countDocuments().exec()
-    const lastPage = Math.ceil( totalPages / limit! )
+    const lastPage = Math.ceil(totalPages / limit!)
+    let date;
+    if(dateFilter === DateEnum.RECIENTES){
+      date = -1;
+    } else {
+      date = 1;
+    }
 
     return {
-    data: await this.matchModel.find()
-      .populate('home', 'nickname')
-      .populate('away', 'nickname')
-      .skip( (page! - 1) * limit! )
-      .limit( limit! )
-      .exec(),
-    
+      data: await this.matchModel.find()
+        .populate('home', 'nickname')
+        .populate('away', 'nickname')
+        .skip((page! - 1) * limit!)
+        .limit(limit!)
+        .sort({ date: date})
+        .exec(),
+
       meta: {
         total: totalPages,
         page: page,

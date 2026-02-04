@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, Min } from 'class-validator';
+import { IsEnum, IsOptional, IsPositive } from 'class-validator';
+import { DateEnum } from '../enums/date.enum';
 
 export class PaginationDto {
   @IsPositive()
@@ -11,5 +12,12 @@ export class PaginationDto {
   @IsOptional()
   @Type(() => Number)
   limit?: number = 10;
+
+  @IsEnum(DateEnum, {
+    message: 
+    `Valores validos: ${DateEnum.ANTIGUOS} | ${DateEnum.RECIENTES}`
+  })
+  @IsOptional()
+  dateFilter: DateEnum
 
 }

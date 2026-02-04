@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, Max, Min, NotEquals } from "class-validator"
+import { IsBoolean, IsNumber, Max, Min } from "class-validator"
 
 export class UpdateMatchDto {
     @IsNumber()
