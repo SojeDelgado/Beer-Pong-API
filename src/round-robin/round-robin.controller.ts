@@ -91,6 +91,13 @@ export class RoundRobinController {
     return this.roundRobinService.promotePlayers(id, promotePlayers.players_count)
   }
 
+  @Post(':id/finish-tournament')
+  finishTournament(
+    @Param('id', ParseObjectIdPipe) id: string
+  ) {
+    return this.roundRobinService.finishTournament(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.roundRobinService.remove(+id);

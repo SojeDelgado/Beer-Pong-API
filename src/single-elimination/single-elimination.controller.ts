@@ -63,6 +63,13 @@ export class SingleEliminationController {
     return this.singleEliminationService.updateSingleMatch(id, matchId, body);
   }
 
+  @Post(':id/finish-tournament')
+  finishTournament(
+    @Param('id', ParseObjectIdPipe) id: string
+  ) {
+    return this.singleEliminationService.finishTournament(id);
+  }
+
   @Delete(':id')
   remove(@Param('id', ParseObjectIdPipe) id: string) {
     return this.singleEliminationService.remove(+id);

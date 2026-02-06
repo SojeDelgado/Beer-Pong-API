@@ -9,6 +9,8 @@ import { MatchupsBuilder } from 'src/common/logic/genereate-single-elimination-m
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { DateEnum } from 'src/common/enums/date.enum';
+import { StatsService } from 'src/stats/stats.service';
+import { SingleEliminationStatus } from './enum/single-elimination-status.enum';
 
 @Injectable()
 export class SingleEliminationService {
@@ -16,6 +18,8 @@ export class SingleEliminationService {
     @InjectModel(SingleElimination.name)
     private seModel: Model<SingleElimination>,
     private readonly playersService: PlayersService,
+    private readonly statsService: StatsService,
+
     private readonly matchupBuilder: MatchupsBuilder
   ) { }
 
@@ -49,11 +53,11 @@ export class SingleEliminationService {
     }
     return {
       data: await this.seModel.find()
-      .populate('winner', 'nickname')
-      .skip((page! - 1) * limit!)
-      .limit(limit!)
-      .sort({ createdAt: date })
-      .exec(),
+        .populate('winner', 'nickname')
+        .skip((page! - 1) * limit!)
+        .limit(limit!)
+        .sort({ createdAt: date })
+        .exec(),
 
       meta: {
         total: totalPages,
@@ -157,6 +161,55 @@ export class SingleEliminationService {
     } catch (error) {
       throw new BadRequestException('Error al actualizar la base de datos');
     }
+  }
+
+  async finishTournament(id: string) {
+    const tournament = await this.seModel.findById(id)
+    if (!tournament) throw new NotFoundException(`ID de torneo: "${id}" no es válido`);
+
+    if (tournament.status === SingleEliminationStatus.FINALIZADO) {
+      throw new BadRequestException('El torneo ya está finalizado');
+    }
+
+    try {
+      // 1. Actualizar torneo
+      tournament.status = SingleEliminationStatus.FINALIZADO;
+      tournament.finishedAt = new Date();
+      tournament.winner = tournament.matches[0].homeScore > tournament.matches[0].awayScore ? tournament.matches[0].home! : tournament.matches[0].away!
+      const validMatches = tournament.matches
+        .filter(m => m.home && m.away) // Solo partidos con ambos jugadores
+        .map(match => ({
+          home: match.home!,
+          away: match.away!,
+          homeScore: match.homeScore,
+          awayScore: match.awayScore,
+          homeIsla: match.homeIsla,
+          awayIsla: match.awayIsla,
+          home2in1: match.home2in1,
+          away2in1: match.away2in1,
+          home3in1: match.home3in1,
+          away3in1: match.away3in1,
+        }));
+
+      await tournament.save();
+
+      await this.statsService.createOrUpdateMany(
+        {
+          matches: validMatches,
+          tournamentWinner: tournament.winner
+        },
+      );
+
+      return {
+        success: true,
+        data: tournament,
+        message: 'Torneo finalizado y estadísticas actualizadas'
+      };
+
+    } catch (error) {
+      throw error;
+    }
+
   }
 
   remove(id: number) {

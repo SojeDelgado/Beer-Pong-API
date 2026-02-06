@@ -6,7 +6,6 @@ export type StatDocument = HydratedDocument<Stat>;
 
 @Schema()
 export class Stat {
-
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: () => Player.name, required: true })
     player: string;
 
@@ -26,8 +25,22 @@ export class Stat {
     partidas_perdidas: number;
 
     @Prop({ default: 0, min: 0 })
+    torneos_jugados: number;
+
+    @Prop({ default: 0, min: 0 })
+    torneos_ganados: number;
+
+    @Prop({ default: 0, min: 0 })
+    torneos_perdidos: number;
+
+    @Prop({ default: 0, min: 0 })
     islas: number;
 
+    @Prop({ default: 0, min: 0 })
+    s2in1: number;
+
+    @Prop({ default: 0, min: 0 })
+    s3in1: number;
 }
 
 export const StatSchema = SchemaFactory.createForClass(Stat);
