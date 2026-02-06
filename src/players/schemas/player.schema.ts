@@ -5,6 +5,8 @@ export type PlayerDocument = HydratedDocument<Player>;
 
 @Schema()
 export class Player {
+    _id: string;
+    
     @Prop({ required: true })
     nickname: string;
 }

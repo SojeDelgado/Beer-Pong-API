@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsMongoId, IsOptional, IsString } from "class-validator";
+import { IsDate, IsEnum, IsMongoId, IsNumber, IsOptional, IsString } from "class-validator";
 import { SingleEliminationStatus } from "../enum/single-elimination-status.enum";
 import { Type } from "class-transformer";
 
@@ -28,4 +28,9 @@ export class UpdateSingleEliminationDto {
     @IsDate()
     @Type(() => Date)
     finishedAt: Date;
+
+    @IsNumber()
+    @IsOptional()
+    @Type(() => Number)
+    totalPlayers: number;
 }

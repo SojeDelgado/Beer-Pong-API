@@ -17,6 +17,9 @@ export class RoundRobin {
     @Prop({ required: true, enum: RoundRobinStatus, default: RoundRobinStatus.PENDIENTE })
     status: string;
 
+    @Prop({ default: 0 })
+    totalPlayers: number;
+
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Player', default: null })
     winner: string
 

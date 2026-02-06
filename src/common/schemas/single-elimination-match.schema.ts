@@ -5,16 +5,16 @@ import { Player } from 'src/players/schemas/player.schema';
 @Schema({ _id: true })
 export class SingleEliminationMatch {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: () => Player.name, default: null })
-  home: string;
+  home: string | null;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: () => Player.name, default: null })
-  away: string;
+  away: string | null;
 
   @Prop({ required: true })
   matchId: number;
 
-  @Prop({ default: null })
-  nextMatchId: number;
+  @Prop({ type: Number, default: null })
+  nextMatchId: number | null;
 
   @Prop({ required: true })
   round: number;

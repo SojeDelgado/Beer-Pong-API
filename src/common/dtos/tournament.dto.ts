@@ -24,4 +24,7 @@ export class TournamentDto {
 
     @Expose()
     finishedAt?: Date
+
+    @Expose()
+    totalPlayers: number
 }

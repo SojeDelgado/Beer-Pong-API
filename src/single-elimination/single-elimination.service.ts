@@ -7,6 +7,8 @@ import { Model } from 'mongoose';
 import { PlayersService } from 'src/players/players.service';
 import { MatchupsBuilder } from 'src/common/logic/genereate-single-elimination-matches';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { DateEnum } from 'src/common/enums/date.enum';
 
 @Injectable()
 export class SingleEliminationService {
@@ -35,16 +37,37 @@ export class SingleEliminationService {
     return singleElimination.save();
   }
 
-  findAll() {
-    return this.seModel.find()
+  async findAll(paginationDto: PaginationDto) {
+    const { page, limit, dateFilter } = paginationDto;
+    const totalPages = await this.seModel.countDocuments().exec()
+    const lastPage = Math.ceil(totalPages / limit!)
+    let date;
+    if (dateFilter === DateEnum.RECIENTES) {
+      date = -1;
+    } else {
+      date = 1;
+    }
+    return {
+      data: await this.seModel.find()
       .populate('winner', 'nickname')
-      .exec();
+      .skip((page! - 1) * limit!)
+      .limit(limit!)
+      .sort({ createdAt: date })
+      .exec(),
+
+      meta: {
+        total: totalPages,
+        page: page,
+        lastPage: lastPage
+      }
+
+    }
   }
 
   async findOne(id: string, fields?: string) {
     if (fields?.includes("winner")) {
       return this.seModel.findById(id, fields).populate('winner', 'nickname').exec();
-    } else{
+    } else {
       return this.seModel.findById(id, fields).exec();
     }
   }

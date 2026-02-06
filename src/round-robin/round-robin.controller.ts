@@ -8,6 +8,9 @@ import { UpdateMatchDto } from 'src/single-elimination/dto/update-match.dto';
 import { CreateTournamentDto } from 'src/common/dtos/create-tournament.dto';
 import { RrMatchDto } from './dto/round-robin-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PromotePlayersDto } from './dto/promote-players.dto';
+import { SingleEliminationMatchDto } from 'src/common/dtos/single-elimination-match.dto';
+import { UpdateSingleEliminationDto } from 'src/single-elimination/dto/update-single-elimination.dto';
 
 @Controller('round-robin')
 export class RoundRobinController {
@@ -37,15 +40,26 @@ export class RoundRobinController {
     return this.roundRobinService.findOne(id, projection);
   }
 
+  // Actualizar torneos sin los matches
+  @Serialize(TournamentDto)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoundRobinDto: UpdateRoundRobinDto) {
-    return this.roundRobinService.update(+id, updateRoundRobinDto);
+  update(@Param('id', ParseObjectIdPipe) id: string, @Body() body: UpdateRoundRobinDto) {
+    return this.roundRobinService.update(id, body);
   }
 
   @Serialize(RrMatchDto)
   @Get(':id/rrMatches')
   getRoundRobinMatches(@Param('id', ParseObjectIdPipe) id: string) {
+    console.log("Una request a ROUND ROBIN MATCHES")
     return this.roundRobinService.getRoundRobinMatches(id);
+  }
+
+  @Serialize(SingleEliminationMatchDto)
+  @Get(':id/seMatches')
+  getSingleEliminationMatches(@Param('id', ParseObjectIdPipe) id: string) {
+    console.log("Una request a ROUND ROBIN seMATCHES")
+
+    return this.roundRobinService.getSingleEliminationMatches(id);
   }
 
   // Actualizar SOLO un Match.
@@ -56,6 +70,25 @@ export class RoundRobinController {
     @Body() body: UpdateMatchDto
   ) {
     return this.roundRobinService.updateRoundRobinMatch(id, matchId, body);
+  }
+
+  // Actualizar SOLO un Match de Single Elimination.
+  @Patch(':id/seMatches/:matchId')
+  updateSingleMatch(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Param('matchId', ParseIntPipe) matchId: number,
+    @Body() body: UpdateMatchDto
+  ) {
+    return this.roundRobinService.updateSingleEliminationMatch(id, matchId, body);
+  }
+
+  // Promover a los mejores x jugadores
+  @Post(':id/actions/promote-to-elimination')
+  promoteToElimination(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() promotePlayers: PromotePlayersDto
+  ) {
+    return this.roundRobinService.promotePlayers(id, promotePlayers.players_count)
   }
 
   @Delete(':id')
