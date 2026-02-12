@@ -26,11 +26,13 @@ export class SingleEliminationService {
   async create(dto: CreateSingleEliminationDto) {
     const { playerIds, ...data } = dto;
 
-    const players = await this.playersService.findManyByIds(playerIds);
+    let players = await this.playersService.findManyByIds(playerIds);
     if (players.length != playerIds.length) {
       throw new NotFoundException('Uno o mas jugadores no ha sido encontrado')
     }
 
+    // Randomizar a los jugadores.
+    players = this.matchupBuilder.shuffle(players);
     const matches = this.matchupBuilder.generateSingleEliminationMatchups(players);
     const singleElimination = new this.seModel({
       name: data.name,

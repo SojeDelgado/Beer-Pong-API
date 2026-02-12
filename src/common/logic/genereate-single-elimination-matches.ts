@@ -4,7 +4,7 @@ import { MatchUp } from "../models/matchup.model";
 export class MatchupsBuilder {
 
     // metodo para randomizar los players que vengan de round-robin.
-    private shuffle(array: any[]): any[] {
+    shuffle(array: any[]): any[] {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
