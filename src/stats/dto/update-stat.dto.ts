@@ -19,4 +19,10 @@ export class UpdateStatDto{
 
     @IsNumber()
     islas: number;
+
+    @IsNumber()
+    s2in1: number;
+
+    @IsNumber()
+    s3in1: number;
 }

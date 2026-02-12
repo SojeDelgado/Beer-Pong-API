@@ -64,7 +64,6 @@ export class SingleEliminationService {
         page: page,
         lastPage: lastPage
       }
-
     }
   }
 

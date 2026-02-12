@@ -4,27 +4,27 @@ import { PlayerDto } from "src/players/dtos/player.dto";
 export class TournamentDto {
     @Expose()
     @Transform(({ obj }) => obj._id.toString())
-    id?: string;
+        id?: string;
 
-    @Expose()
-    name?: string;
+        @Expose()
+        name?: string;
 
-    @Expose()
-    place?: string;
+        @Expose()
+        place?: string;
 
-    @Expose()
-    status?: string
+        @Expose()
+        status?: string
 
-    @Expose()
-    @Type(() => PlayerDto)
-    winner?: string
+        @Expose()
+        @Type(() => PlayerDto)
+        winner?: string
 
-    @Expose()
-    createdAt?: Date
+        @Expose()
+        createdAt?: Date
 
-    @Expose()
-    finishedAt?: Date
+        @Expose()
+        finishedAt?: Date
 
-    @Expose()
-    totalPlayers: number
+        @Expose()
+        totalPlayers: number
 }

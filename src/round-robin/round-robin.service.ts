@@ -11,6 +11,8 @@ import { RoundRobinStatus } from './enum/round-robin-status.enum';
 import { SingleEliminationStatus } from 'src/single-elimination/enum/single-elimination-status.enum';
 
 import { StatsService } from 'src/stats/stats.service';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { DateEnum } from 'src/common/enums/date.enum';
 
 
 @Injectable()
@@ -44,10 +46,30 @@ export class RoundRobinService {
     return roundRobin.save();
   }
 
-  findAll() {
-    return this.rrModel.find()
-      .populate('winner', 'nickname')
-      .exec();
+  async findAll(paginationDto: PaginationDto) {
+    const { page, limit, dateFilter } = paginationDto;
+    const totalPages = await this.rrModel.countDocuments().exec()
+    const lastPage = Math.ceil(totalPages / limit!)
+    let date;
+    if (dateFilter === DateEnum.RECIENTES) {
+      date = -1;
+    } else {
+      date = 1;
+    }
+    return {
+      data: await this.rrModel.find()
+        .populate('winner', 'nickname')
+        .skip((page! - 1) * limit!)
+        .limit(limit!)
+        .sort({ createdAt: date })
+        .exec(),
+
+      meta: {
+        total: totalPages,
+        page: page,
+        lastPage: lastPage
+      }
+    }
   }
 
   findOne(id: string, fields?: string) {
@@ -280,7 +302,7 @@ export class RoundRobinService {
         away3in1: false
       }));
 
-      
+
       await tournament.save();
       // Actualizar stats despues de guardar:
       const validMatches = tournament.rrMatches
@@ -298,7 +320,7 @@ export class RoundRobinService {
           away3in1: match.away3in1,
         }));
 
-        await this.statsService.createOrUpdateMany(
+      await this.statsService.createOrUpdateMany(
         {
           matches: validMatches
         },

@@ -32,6 +32,8 @@ export class MatchesService {
       puntos_favor_totales: createMatchDto.homeScore,
       puntos_contra_totales: createMatchDto.awayScore,
       islas: createMatchDto.homeIsla ? 1 : 0,
+      s2in1: createMatchDto.home2in1 ? 1 : 0,
+      s3in1: createMatchDto.home3in1 ? 1 : 0,
     }
 
     const awayData = {
@@ -41,6 +43,8 @@ export class MatchesService {
       puntos_favor_totales: createMatchDto.awayScore,
       puntos_contra_totales: createMatchDto.homeScore,
       islas: createMatchDto.awayIsla ? 1 : 0,
+      s2in1: createMatchDto.away2in1 ? 1 : 0,
+      s3in1: createMatchDto.away3in1 ? 1 : 0,
     }
 
     await Promise.all([

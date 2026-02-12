@@ -1,16 +1,20 @@
+// Nest
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
-import { RoundRobinService } from './round-robin.service';
-import { UpdateRoundRobinDto } from './dto/update-round-robin.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptors';
-import { TournamentDto } from 'src/common/dtos/tournament.dto';
 import { ParseObjectIdPipe } from 'nestjs-object-id';
+// Interceptors
+import { Serialize } from 'src/interceptors/serialize.interceptors';
+// Service
+import { RoundRobinService } from './round-robin.service';
+// Dtos
+import { TournamentDto } from 'src/common/dtos/tournament.dto';
+import { UpdateRoundRobinDto } from './dto/update-round-robin.dto';
 import { UpdateMatchDto } from 'src/single-elimination/dto/update-match.dto';
 import { CreateTournamentDto } from 'src/common/dtos/create-tournament.dto';
 import { RrMatchDto } from './dto/round-robin-match.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { PromotePlayersDto } from './dto/promote-players.dto';
 import { SingleEliminationMatchDto } from 'src/common/dtos/single-elimination-match.dto';
-import { UpdateSingleEliminationDto } from 'src/single-elimination/dto/update-single-elimination.dto';
+import { RoundRobinPaginatedDto } from './dto/round-robin-paginated.dto';
 
 @Controller('round-robin')
 export class RoundRobinController {
@@ -22,12 +26,12 @@ export class RoundRobinController {
   }
 
   // Traer a todos los torneos, sin los matches.
-  @Serialize(TournamentDto)
+  @Serialize(RoundRobinPaginatedDto)
   @Get()
   findAll(
     @Query() paginationDto: PaginationDto
   ) {
-    return this.roundRobinService.findAll();
+    return this.roundRobinService.findAll(paginationDto);
   }
 
   @Serialize(TournamentDto)
