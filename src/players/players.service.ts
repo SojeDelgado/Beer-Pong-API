@@ -19,13 +19,17 @@ export class PlayersService {
         try {
             const player = await this.playerModel.findById(playerId);
             if (!player) {
-                throw new NotFoundException(`Jugador con id ${playerId} no encontrado`);
+                throw new NotFoundException({
+                    message: `Jugador con id ${playerId} no encontrado`
+                });
             }
             return player;
 
         } catch (err) {
             if (err.name === 'CastError') {
-                throw new BadRequestException(`ID "${playerId}" no es válido`);
+                throw new BadRequestException({
+                    message: `ID "${playerId}" no es válido`
+                });
             }
             throw err;
         }
@@ -36,7 +40,9 @@ export class PlayersService {
             return await this.playerModel.find({ _id: { $in: ids } })
         } catch (error) {
             if (error.name === 'CastError') {
-                throw new BadRequestException(`Id/s inválido`);
+                throw new BadRequestException({
+                    message: `Uno o más ID's son inválidos`
+                });
             }
             throw error;
         }

@@ -31,7 +31,9 @@ export class RoundRobinService {
 
     const players = await this.playersService.findManyByIds(playerIds);
     if (players.length != playerIds.length) {
-      throw new NotFoundException('Uno o mas jugadores no ha sido encontrado')
+      throw new NotFoundException({
+        message: 'Uno o mas jugadores no ha sido encontrado'
+      })
     }
 
     const rrMatches = this.matchupBuilder.generateRoundRobinMatchups(players);
@@ -91,7 +93,9 @@ export class RoundRobinService {
       )
     } catch (err) {
       if (err.name === 'CastError') {
-        throw new BadRequestException(`ID "${id}" no es válido`);
+        throw new BadRequestException({
+          message: `ID "${id}" no es válido`
+        });
       }
       throw err;
     }
@@ -109,7 +113,9 @@ export class RoundRobinService {
       });
 
     if (!singleElimination) {
-      throw new NotFoundException(`Torneo con ID ${id} no encontrado`);
+      throw new NotFoundException({
+        message: `Torneo con ID ${id} no encontrado`
+      });
     }
 
     return singleElimination.rrMatches;
@@ -127,7 +133,9 @@ export class RoundRobinService {
       });
 
     if (!singleElimination) {
-      throw new NotFoundException(`Torneo con ID ${id} no encontrado`);
+      throw new NotFoundException({
+        message: `Torneo con ID ${id} no encontrado`
+      });
     }
 
     return singleElimination.seMatches;
@@ -147,7 +155,10 @@ export class RoundRobinService {
         { _id: id },
         { $set: updateFields },
         { arrayFilters: [{ "match.matchId": matchId }], new: true }
-      ).orFail(new NotFoundException('Torneo o partido no encontrado'));
+
+      ).orFail(new NotFoundException({
+        message: 'Torneo o partido no encontrado'
+      }));
 
       // Validacion de si se han jugado todos los partidos:
       const allFinished = tournament.rrMatches.every(m => m.isFinished);
@@ -164,7 +175,9 @@ export class RoundRobinService {
       };
 
     } catch (error) {
-      throw new BadRequestException('Error al intentar actualizar el partido');
+      throw new BadRequestException({
+        message: `Error al intentar actualizar el partido, ${error}`
+      });
     }
   }
 
@@ -172,7 +185,9 @@ export class RoundRobinService {
     const tournament = await this.rrModel.findById(id);
     if (!tournament) throw new NotFoundException('Torneo no encontrado');
     const currentMatch = tournament.seMatches.find(m => m.matchId === matchId);
-    if (!currentMatch) throw new NotFoundException('Partido no encontrado');
+    if (!currentMatch) throw new NotFoundException({
+      message: 'Partido no encontrado'
+    });
 
     const updateFields = {};
     const filters: any = [{ "current.matchId": matchId }];
@@ -211,7 +226,9 @@ export class RoundRobinService {
 
       return { message: "Partido actualizado correctamente", updatedTournament };
     } catch (error) {
-      throw new BadRequestException('Error al actualizar la base de datos');
+      throw new BadRequestException({
+        message: 'Error al actualizar la base de datos'
+      });
     }
 
   }
@@ -220,15 +237,21 @@ export class RoundRobinService {
     const tournament = await this.rrModel.findById(id);
 
     if (!tournament) {
-      throw new NotFoundException(`Torneo con ID: ${id} no encontrado`);
+      throw new NotFoundException({
+        message: `Torneo con ID: ${id} no encontrado`
+      });
     }
 
     if (playersCount > tournament.totalPlayers) {
-      throw new BadRequestException(`${playersCount} es mayor a la cantidad de participantes: ${tournament.totalPlayers}`);
+      throw new BadRequestException({
+        message: `${playersCount} es mayor a la cantidad de participantes: ${tournament.totalPlayers}`
+      });
     }
 
     if (tournament.seMatches.length !== 0) {
-      throw new BadRequestException(`No se pueden promover jugadores. El torneo ya cuenta con partidos de eliminacion directa.`);
+      throw new BadRequestException({
+        message: `No se pueden promover jugadores. El torneo ya cuenta con partidos de eliminacion directa.`
+      });
     }
 
     const stats = new Map<string, any>();
@@ -236,9 +259,9 @@ export class RoundRobinService {
     tournament.rrMatches.forEach((match) => {
       // Validar cada partido terminado
       if (!match.isFinished) {
-        throw new BadRequestException(
-          `El partido con ID: ${match.matchId} no ha sido jugado`
-        );
+        throw new BadRequestException({
+          message: `El partido con ID: ${match.matchId} no ha sido jugado`
+        });
       };
 
       [
@@ -334,10 +357,14 @@ export class RoundRobinService {
 
   async finishTournament(id: string) {
     const tournament = await this.rrModel.findById(id)
-    if (!tournament) throw new NotFoundException(`ID de torneo: "${id}" no es válido`);
+    if (!tournament) throw new NotFoundException({
+      message: `ID de torneo: "${id}" no es válido`
+    });
 
     if (tournament.status === SingleEliminationStatus.FINALIZADO) {
-      throw new BadRequestException('El torneo ya está finalizado');
+      throw new BadRequestException({
+        message: 'El torneo ya está finalizado'
+      });
     }
 
     try {

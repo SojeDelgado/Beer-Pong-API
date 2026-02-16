@@ -28,7 +28,9 @@ export class SingleEliminationService {
 
     let players = await this.playersService.findManyByIds(playerIds);
     if (players.length != playerIds.length) {
-      throw new NotFoundException('Uno o mas jugadores no ha sido encontrado')
+      throw new NotFoundException({
+        message: 'Uno o mas jugadores no ha sido encontrado'
+      })
     }
 
     // Randomizar a los jugadores.
@@ -88,7 +90,9 @@ export class SingleEliminationService {
       )
     } catch (err) {
       if (err.name === 'CastError') {
-        throw new BadRequestException(`ID "${id}" no es válido`);
+        throw new BadRequestException({
+          message: `ID "${id}" no es válido`
+        });
       }
       throw err;
     }
@@ -107,7 +111,9 @@ export class SingleEliminationService {
       });
 
     if (!singleElimination) {
-      throw new NotFoundException(`Torneo con ID ${id} no encontrado`);
+      throw new NotFoundException({
+        message: `Torneo con ID ${id} no encontrado`
+      });
     }
 
     return singleElimination.matches
@@ -118,9 +124,13 @@ export class SingleEliminationService {
 
     // Validar id's
     const tournament = await this.seModel.findById(id);
-    if (!tournament) throw new NotFoundException('Torneo no encontrado');
+    if (!tournament) throw new NotFoundException({
+      message: `Torneo con ${id} no encontrado`
+    });
     const currentMatch = tournament.matches.find(m => m.matchId === matchId);
-    if (!currentMatch) throw new NotFoundException('Partido no encontrado');
+    if (!currentMatch) throw new NotFoundException({
+      message: `Partido con ${id} no encontrado`
+    });
 
     const updateFields = {};
     const filters: any = [{ "current.matchId": matchId }];
@@ -160,16 +170,22 @@ export class SingleEliminationService {
 
       return { message: "Partido actualizado correctamente", updatedTournament };
     } catch (error) {
-      throw new BadRequestException('Error al actualizar la base de datos');
+      throw new BadRequestException({
+        message: 'Error al actualizar la base de datos'
+      });
     }
   }
 
   async finishTournament(id: string) {
     const tournament = await this.seModel.findById(id)
-    if (!tournament) throw new NotFoundException(`ID de torneo: "${id}" no es válido`);
+    if (!tournament) throw new NotFoundException({
+      message: `ID de torneo: "${id}" no es válido`
+    });
 
     if (tournament.status === SingleEliminationStatus.FINALIZADO) {
-      throw new BadRequestException('El torneo ya está finalizado');
+      throw new BadRequestException({
+        message: 'El torneo ya está finalizado'
+      });
     }
 
     try {
