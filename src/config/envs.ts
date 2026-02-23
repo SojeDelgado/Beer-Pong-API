@@ -4,6 +4,7 @@ import * as joi from 'joi';
 
 interface EnvVars {
   PORT: number;
+  MONGO_URL: string;
 }
 
 const envsSchema = joi.object({
@@ -24,4 +25,5 @@ const envVars:EnvVars = value;
 
 export const envs = {
   port: envVars.PORT,
+  mongoUrl: envVars.MONGO_URL
 };
