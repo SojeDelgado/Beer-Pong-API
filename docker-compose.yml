@@ -2,7 +2,10 @@ services:
   api:
     build: .
     environment:
-      - MONGO_URL=mongodb://db:27017/beerpong # Se conecta al contenedor 'db'
+      - MONGO_URL=${MONGO_URL} # Se conecta al contenedor 'db'
+      - PORT=${PORT}
+    ports:
+      - ${PORT}:${PORT}
     depends_on:
       - db
 

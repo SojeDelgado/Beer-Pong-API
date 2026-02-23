@@ -1,0 +1,22 @@
+services:
+  api:
+    build:
+      context: .
+      target: production # Usa la etapa 'production' (más ligera y segura)
+    ports:
+      - "80:80"
+    env_file:
+      - .env.prod
+    restart: always
+
+  db:
+    image: mongo:6.0
+    environment:
+      # Estos crean al usuario la primera vez que arranca el volumen
+      - MONGO_INITDB_ROOT_USERNAME=soje
+      - MONGO_INITDB_ROOT_PASSWORD=d3lg4d007
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

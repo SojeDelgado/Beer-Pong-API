@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: .
+      target: development # Usa la etapa 'development' del Dockerfile
+    volumes:
+      - .:/usr/src/app # "Hot Reload": cambias código en tu PC y se refleja en Docker
+      - /usr/src/app/node_modules
+    ports:
+      - "${PORT}:3000"
+    env_file:
+      - .env.dev
